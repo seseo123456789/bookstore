@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{fragment/personal_layout}" >
+
+<th:block layout:fragment="content_css">
+    <!-- html 파일이 열릴때 같이 실행되는 css -->
+    <!-- <link rel="stylesheet" href="/"> -->
+</th:block>
+
+<th:block layout:fragment="contentFragment">
+    <!-- html 코드작성 -->
+
+  <div class="row">
+    <div class="col buyList-div">
+      
+        <h1>구매 이력 목록</h1>
+      
+    </div>
+  </div>  
+  <div class="row mb-4">
+    <div class="col" style="text-align: end;">
+      <span style="font-size: 25px;">[[${totalBuyCNT.memberId}]]님</span>&nbsp 의 &nbsp&nbsp 
+      총 구매상품수 <span style="font-size: 25px;">[[${totalBuyCNT.itemCnt}]] 개</span>.
+    </div>
+  </div>      
+ 
+  <th:block th:each="buy, state: ${buyList}">   
+    <div class="row">
+        <div class="col">
+            
+            <div class="accordion" id="accordionPanelsStayOpenExample">
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" th:data-bs-target="${'#collapseOne_' + state.count}" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+                                                              [[${#numbers.formatInteger(#lists.size(buyList)-state.index, 2)}]] |
+
+                            <span style="margin-right:10px;"> [[${buy.buyDetailList[0].itemVo.itemName}]]</span>                             
+                          
+                          <th:block th:if="${#lists.size(buy.buyDetailList) != 1}">
+                            <span style="margin-right:5px;"> 외 [[${#lists.size(buy.buyDetailList)-1}]]개</span>
+                          </th:block> 
+                            <span style="margin-right:50px;">구매</span>
+                            <span style="margin-right:30px;">[[${buy.buyDate}]]</span>   
+                            
+                                                              [[${#numbers.formatCurrency(buy.buyPrice)}]]원 결제
+                      </button>
+                  </h2>
+
+
+                  <div th:id="${'collapseOne_' + state.count}" class="accordion-collapse collapse">
+                      <div class="accordion-body">
+                        <table class="table table-hover align-middle">
+                            <colgroup>
+                              <col width="10%">
+                              <col width="*">
+                              <col width="15%">
+                              <col width="20%">
+                            </colgroup>
+                            <thead>
+                              <tr>
+                                <td>No</td>
+                                <td>구매 상품</td>
+                                <td>수 량</td>
+                                <td>결제 금액</td>
+                              </tr>
+                            </thead>
+                            
+                            
+                            <tbody>
+                              <tr th:each="buyDetail, detailState : ${buy.buyDetailList}" style="font-family: 'SUITE-Regular'; font-weight:bolder;">
+                                <td>[[${#lists.size(buy.buyDetailList)-detailState.index}]]</td>
+                                <td>
+                                  <img th:src="@{'/upload/' + ${buyDetail.itemVo.imgList[0].attachedFileName}}" width="15%">
+                                  [[${buyDetail.itemVo.itemName}]]
+                                </td>
+                                <td>[[${buyDetail.buyCnt}]]</td>
+                                <td>
+                                  [[${#numbers.formatCurrency(buyDetail.totalPrice)}]]원</td>
+                              </tr>
+                            </tbody>
+                        </table>
+                      </div>
+                  </div>
+                </div>
+            </div>
+            
+        </div>    
+    </div>    
+</th:block>
+    
+
+   
+
+
+</th:block>
+
+<th:block layout:fragment="content_js">
+    <!-- html 파일이 열릴때 같이 실행되는 js -->
+    <!-- <script src="/"></script> -->
+</th:block>
+
+
+</html>

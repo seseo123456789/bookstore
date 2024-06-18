@@ -1,0 +1,52 @@
+
+/* 리뷰 목록 테이블  */
+.review-table {
+    width: 1000px;
+    text-align: center;
+    border: 1px solid #fff;
+    /* border-spacing: 5px; */
+    font-family: 'SUITE-Regular';
+    margin: auto;
+    
+}
+
+caption {
+    font-weight: bold;
+}
+
+.review-table td {
+    padding: 10px;
+    background-color: #eeeeeee3;
+}
+
+.review-table th {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+}
+
+.bookListTr {
+    border-bottom: 3px solid rgba(172, 171, 171, 0.616);
+    cursor: pointer;
+}
+
+img {
+    width: 90px;
+    height: 100px;
+}
+
+
+.tablefoot {
+    padding: 0;
+    border-bottom: 3px solid #009688;
+}
+
+/* 페이지 번호 div */
+.pagination{
+    margin: auto; 
+    font-size: 30px; 
+    width: 1000px;  
+    display: flex;
+    justify-content: center;
+    padding-bottom: 100px;
+}

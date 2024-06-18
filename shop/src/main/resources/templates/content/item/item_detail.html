@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+                xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+                layout:decorate="~{fragment/user_layout}" >
+
+<th:block layout:fragment="content_css">
+    <!-- html 파일이 열릴때 같이 실행되는 css -->
+    <!--<link rel="stylesheet" href="/"> -->
+    
+</th:block>
+
+<th:block layout:fragment="contentFragment">
+
+    <!-- html 코드작성 -->
+
+    <div class="row justify-content-center">
+        <div class="col-8">
+            <div class="row mb-3">    
+                <div class="offset-2 col-4">
+                    <th:block th:each="img : ${itemVo.imgList}">
+                        <th:block th:if="${img.isMain == 'Y'}">
+                            <img th:src="@{'/upload/'+ ${img.attachedFileName}}" width="300px" height="100px" class="img-thumbnail" alt="대표이미지 입니다">
+                        </th:block>
+                    </th:block>
+                </div>
+                
+                
+                    <div class="col-4">
+                        <div class="row mb-3">
+                            <div class="col-12 ">
+                                <label for="" class="form-label" name="itemName"></label>
+                                [[${itemVo.itemName}]]
+                            </div>
+                        </div>  
+                        <div class="row mb-3">
+                            <div class="col-12" id="itemPrice">
+                                
+                                [[${#numbers.formatCurrency(itemVo.itemPrice)}]]
+                            
+                            </div>
+                        </div> 
+                        
+                        <div class="row mb-3">
+                            <div class="col-5">
+                                <label class="form-label">수량</label>
+                                     <!-- <form action="/cart/insertCart" method="post" id="insert-cart-form" > </form> 동기 장바구님담기실행 -->
+                                       <!-- <input type="hidden" name="itemCode" id="itemCode" th:value="${itemVo.itemCode}"> -->
+
+
+                                       <form action="/buy/buyDirect" method="post" id="insert-cartDirect-form">
+                                            <input type="hidden" name="itemCode" id="itemCode" th:value="${itemVo.itemCode}">
+                                            <input type="hidden" name="totalPrice" id="totalPrice">
+                                            <input type="number" name="buyCnt" id="cartCnt" class="form-control"  th:oninput="setTotalPrice(this,[[${itemVo.itemPrice}]])" value="1" min="1">
+                                      </form> 
+                            </div>
+                        </div> 
+
+                        <div class="row mb-3">
+                            <div class="col-10">
+                                <label class="form-label">총 구매가격</label>
+                                <span class="total-price-span"> [[${#numbers.formatCurrency(itemVo.itemPrice)}]]</span>
+                            
+                            </div>
+                        </div> 
+
+
+                        <div class="row mb-3">
+                            <div class="col d-grid mb-3">
+                                <label class="form-label"></label>
+                                <input type="button" class="btn btn-primary" value="장바구니" th:onclick="goCart([[${session.loginInfo}]], [[${itemVo.itemCode}]])">
+                            
+                            </div>
+                            <div class="col d-grid mb-3">
+                                <label class="form-label"></label>
+                                <input type="button" class="btn btn-primary" value="바로구매" onclick="goBuy()">
+                            </div>
+                        </div>       
+                    </div>
+                
+
+
+            </div>    
+        </div>        
+    </div>
+
+
+
+
+
+
+    <div class="row mb-3">
+        <div class="col-12 mt-5 text-center">
+            <label for="" class="form-label"></label>  
+            [[${itemVo.itemIntro}]]           
+        </div>        
+    </div>
+
+    <th:block th:each="img : ${itemVo.imgList}">
+        <th:block th:if="${img.isMain == 'N'}">
+            <div class="row" style="margin-left: 20%;">
+                <div class="col-12">
+                                
+                    <img th:src="@{'/upload/'+ ${img.attachedFileName}}" width="800px" height="400px" class="img-thumbnail" alt="상세이미지1 입니다"> 
+
+                </div>
+            </div>
+        </th:block>    
+    </th:block> 
+
+</th:block>
+
+
+
+
+
+
+<th:block layout:fragment="content_js">
+    <!-- html 파일이 열릴때 같이 실행되는 js -->
+    <script src="/js/content/item/item_detail.js"></script>
+</th:block>
+</html>

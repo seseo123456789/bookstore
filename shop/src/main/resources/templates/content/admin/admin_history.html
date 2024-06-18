@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+                xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+                layout:decorate="~{fragment/admin_layout}" >
+
+<th:block layout:fragment="content_css">
+    <!-- html 파일이 열릴때 같이 실행되는 css -->
+    <!-- <link rel="stylesheet" href="/"> -->
+</th:block>
+
+<th:block layout:fragment="contentFragment">
+    <!-- html 코드작성 -->
+ 
+<style>
+    .pagination{
+    margin: auto; 
+    font-size: 30px; 
+    width: 1000px;  
+    display: flex;
+    justify-content: center;
+    padding-bottom: 100px;
+}
+</style>    
+
+    <div class="row mb-3" >
+        <div class="col buyList-div">
+          
+            <h1>회원 구매상품 목록</h1>
+          
+        </div>
+    </div> 
+
+
+<div class="row">
+    <div class="col">
+
+        <div class="row mb-3">
+            <div class="col">
+                <form action="/admin/adminHistory" class="moveForm" method="post">
+                    <table class="table table-borderless align-middle">
+                        <colgroup>
+                            <col width="15%">
+                            <col width="*">
+                            <col width="15%">
+                        </colgroup>
+
+                            
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="row">
+                                            <div class="col">
+                                                <select class="form-select" name="searchType">
+                                                    <option value="BUY_CODE" th:selected="${pageMaker.cri.searchType==null or pageMaker.cri.searchType=='BUY_CODE'}" >구매번호</option>
+                                                    <option value="MEMBER_ID" th:selected="${pageMaker.cri.searchType=='MEMBER_ID'}">구매자ID</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td colspan="2">
+                                        <div class="row">
+                                            <div class="col">
+                                                <input type="text" name="searchName" th:value="${pageMaker.cri.searchName}" class="form-control">
+                                            </div>
+                                        </div>
+                                    </td>                                
+                                </tr>
+
+
+
+                                <tr>
+                                    <td>
+                                        <div class="row">
+                                            <div class="col text-center">
+                                                <span style="font-size:20px;">구매일시</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="input-group">
+                                                    <span class="input-group-text" id="basic-addon3">From</span>
+                                                    <input type="date" th:value="${pageMaker.cri.fromDate}"  name="fromDate" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4">
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="input-group">
+                                                    <span class="input-group-text" id="basic-addon3">To</span>
+                                                    <input type="date" th:value="${pageMaker.cri.toDate}" name="toDate" class="form-control" id="basic-url" aria-describedby="basic-addon3 basic-addon4">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="col d-grid">
+                                                <input type="hidden" name="page" class="page" th:value="${pageMaker.cri.page}">
+                                                <input type="hidden" name="perPageNum" th:value="${pageMaker.cri.perPageNum}"> 
+                                                
+                                                <input type="button" class="btn btn-primary searchBtn" value="검색">
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            </tbody>       
+                    </table>
+
+                </form>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col">
+                <table class="table table-striped table-hover align-middle text-center">
+                
+                    <colgroup>
+                        <col width="10%">
+                        <col width="10%">
+                        <col width="30%">
+                        <col width="30%">
+                        <col width="20%">
+                    </colgroup>
+
+                    <thead>
+                        <tr>
+                            <td>No</td>
+                            <td>구매번호</td>
+                            <td>구매ID</td>
+                            <td>결제 금액</td>
+                            <td>구매 일시</td>
+                        </tr>
+                    </thead>
+                    <tbody>                      
+                            <tr th:each="buy , state: ${buyList} " th:onclick="showModal([[${buy.buyCode}]])" style="cursor:pointer; font-family: 'SUITE-Regular'; font-weight:bolder;">
+                                <!-- <td>[[${#lists.size(buyList)-state.index}]]</td> -->
+                                <td>[[${buy.num}]]</td>
+                                <td>[[${buy.buyCode}]]</td>
+                                <td>[[${buy.memberId}]]</td>
+                                <td>[[${#numbers.formatCurrency(buy.buyPrice)}]]</td>
+                                <td>[[${buy.buyDate}]]</td>
+                            
+                            </tr>                          
+                    </tbody>
+                    
+                </table>
+
+            </div>
+        </div>
+<!-- 페이징 코드 -->
+   
+        <div class="pagination" th:if="${tCnt!=0}">      
+            <th:block th:if="${pageMaker.prev}"> 
+                <a th:href="@{/admin/adminHistory(page=${pageMaker.StartPage-1})}"> 이전 </a>
+            </th:block>
+
+        
+
+                <th:block th:each="pageNum : ${#numbers.sequence(pageMaker.StartPage, pageMaker.endPage)}" >                   
+                        <a th:href="@{/admin/adminHistory(page=${pageNum})}"><span class="pNums" style="margin-right: 30px; margin-left: 25px;" th:value="${pageNum}">[[${pageNum}]]<span></a>                
+                </th:block>
+                
+            
+
+            <th:block th:if="${pageMaker.next && pageMaker.endPage>0}"> 
+                <a th:href="@{/admin/adminHistory(page=${pageMaker.endPage + 1})}"> 다음 </a>
+            </th:block>                      
+        </div>
+        <form action="/admin/adminHistory" class ="pageForm" method="post">
+            <div>
+                <input type="hidden" name="page"        class="page1"       th:value="${pageMaker.cri.page}"> 
+                <input type="hidden" name="perPageNum"                      th:value="${pageMaker.cri.perPageNum}"> 
+                <input type="hidden" name="searchType"  class="searchType1" th:value="${pageMaker.cri.searchType}"> 
+                <input type="hidden" name="searchName"  class="searchName1" th:value="${pageMaker.cri.searchName}"> 
+                <input type="hidden" name="toDate"      class="toDate1"     th:value="${pageMaker.cri.toDate}">   
+                <input type="hidden" name="fromDate"    class="fromDate1"   th:value="${pageMaker.cri.fromDate}">        
+            </div>
+        </form>
+
+
+
+
+
+    </div>
+</div>
+
+
+  
+  <!-- Modal -->
+  <div class="modal fade" id="buy-detail-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">구매이력정보</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body fs-6">
+          <div class="row mb-3">
+            <div class="col">
+                <table class="table border border-dark-subtle text-center">
+                    <tr>
+                        <td class="border-dark-subtle  bg-secondary-subtle">구매번호</td>
+                        <td class="border-dark-subtle" id="modal-buyCode">1</td>
+                        <td class="border-dark-subtle bg-secondary-subtle">구매자ID</td>
+                        <td class="border-dark-subtle" id="modal-memberId">java</td>
+                    </tr>
+                    <tr>
+                        <td class="border-dark-subtle bg-secondary-subtle">구매금액</td>
+                        <td class="border-dark-subtle" id="modal-buyPrice">10000</td>
+                        <td class="border-dark-subtle bg-secondary-subtle">구매일시</td>
+                        <td class="border-dark-subtle" id="modal-buyDate">2024-02-02</td>
+                    </tr>
+                </table>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+                <table class="table align-middle text-center">
+                    <colgroup>
+                        <col width="10%">
+                        <col width="50%">
+                        <col width="15%">
+                        <col width="*">             
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <td>No</td>
+                            <td>구매상품</td>
+                            <td>수량</td>
+                            <td>결제금액</td>
+                        </tr>
+                    </thead>
+                    
+                    <tbody id="modal-tbody">
+                        <tr>
+                            <td>1</td>
+                            <td>자바교과서</td>
+                            <td>10</td>
+                            <td>20000</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+          </div>
+
+
+
+
+
+
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+
+</th:block>
+
+
+
+
+<th:block layout:fragment="content_js">
+    <!-- html 파일이 열릴때 같이 실행되는 js -->
+    <script src="/js/content/admin/admin_history.js"></script> 
+</th:block>
+
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title></title>
+</head>
+<body>
+
+    <th:block th:fragment="itemSideFragment">
+        <ul class="list-group">
+            <li class="list-group-item point-span" th:classappend="${page==1? 'active' : ''}" onclick="location.href='/admin/adminHistory'">구매상품 목록</li>
+            <li class="list-group-item point-span"  th:classappend="${page==2? 'active' : ''}" onclick="location.href='/admin/regItemForm'">상품 등록</li>
+            <li class="list-group-item point-span" th:classappend="${page==4? 'active' : ''}" onclick="location.href='/admin/updateItemInfo';">상품 정보 변경</li>
+            <li class="list-group-item point-span">상품 검색</li>
+          </ul>
+    </th:block>
+
+</body>
+</html>

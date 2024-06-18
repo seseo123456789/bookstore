@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 해당 파일에 모든 쿼리문을 작성 -->
+<mapper namespace="itemMapper">
+            <resultMap id="resultCate" type="com.green.shop.item.vo.CategoryVo">
+                <id column="CATE_CODE"  property="cateCode" />
+                <result column="CATE_NAME"      property="cateName"/>
+            </resultMap>
+
+    <resultMap id="resultItem" type="com.green.shop.item.vo.ItemVo">
+        <id column="ITEM_CODE"      property="itemCode" />
+        <result column="ITEM_NAME"        property="itemName"/>
+        <result column="ITEM_PRICE"       property="itemPrice"/>
+        <result column="ITEM_STOCK"       property="itemStock"/>
+        <result column="ITEM_INTRO"       property="itemIntro"/>
+        <result column="REG_DATE"         property="regDate"/>
+        <result column="CATE_CODE"        property="cateCode"/>
+        <result column="ITEM_STATUS"       property="itemStatus"/>
+        <result column="STR_STATUS"       property="strStatus"/>
+        <result column="CURRENT_STOCK"    property="currentStock"/>
+        <association property="categoryVo"  resultMap="resultCate"/>
+        <collection property="imgList"      resultMap="resultImg"/>
+<!--  collection 이 마지막에 정의되야됨 안그럼   </resultMap>에 빨간줄 뜸    -->
+    </resultMap>
+
+    <resultMap id="resultImg" type="com.green.shop.item.vo.ImgVo">
+        <id column="IMG_CODE"                   property="imgCode"/>
+        <result column="ORIGIN_FILE_NAME"           property="originFileName"/>
+        <result column="ATTACHED_FILE_NAME"         property="attachedFileName"/>
+        <result column="IS_MAIN"                   property="isMain"/>
+        <result column="ITEM_CODE"                  property="itemCode"/>
+    </resultMap>
+
+
+
+
+    <!--  카테고리 조회  -->
+    <select id="selectCateGoryList" resultMap="resultCate">
+        SELECT
+            CATE_CODE
+            , CATE_NAME
+        FROM ITEM_CATEGORY
+        ORDER BY CATE_CODE ASC
+    </select>
+
+    <!--  상품목록 조회  -->
+    <select id="selectItemList" resultMap="resultItem">
+        SELECT
+            SHOP_ITEM.ITEM_CODE
+            , ITEM_NAME
+            , ITEM_PRICE
+            , ATTACHED_FILE_NAME
+        FROM SHOP_ITEM INNER JOIN ITEM_IMAGE
+        ON  SHOP_ITEM.ITEM_CODE = ITEM_IMAGE.ITEM_CODE
+        WHERE IS_MAIN= 'Y'
+        ORDER BY REG_DATE DESC
+    </select>
+
+    <!--  상품상세보기  -->
+        <select id="itemDetail" resultMap="resultItem">
+            SELECT
+                ITEM_IMAGE.ITEM_CODE
+                , ITEM_NAME
+                , ITEM_PRICE
+                , ITEM_INTRO
+                , ATTACHED_FILE_NAME
+                , ITEM_IMAGE.IS_MAIN
+            FROM SHOP_ITEM INNER JOIN ITEM_IMAGE
+            ON  SHOP_ITEM.ITEM_CODE = ITEM_IMAGE.ITEM_CODE
+            WHERE ITEM_IMAGE.ITEM_CODE=#{itemCode}
+        </select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

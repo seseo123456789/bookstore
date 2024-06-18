@@ -1,0 +1,14 @@
+
+
+.detailReviewTable tr {
+    height: 50px;
+    font-size: 20px;
+    font-family: 'SUITE-Regular';
+}
+
+
+.detailImg-div {
+    text-align: center;
+    padding-left: 5%; 
+    padding-right: 5%;
+}

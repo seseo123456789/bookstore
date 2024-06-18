@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+                xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+                layout:decorate="~{fragment/user_layout}" >
+
+<!-- <th:block layout:fragment="content_css">
+    html 파일이 열릴때 같이 실행하는 css    
+</th:block> -->
+
+<th:block layout:fragment="contentFragment">
+    <!-- html 코드 작성-->
+    <link rel="stylesheet" href="/css/review_list.css" type="text/css">
+
+
+
+<div class="row justify-content-center">
+    
+    <div class="col-5" style="margin-top: 10px;">
+        <input type="button" class="btn btn-primary"  value="HOME">
+        <th:block th:if="${session.loginInfo!=null}">
+            <input type="button" class="btn btn-primary" onclick="writeReivew()" value="리뷰작성">
+        </th:block>    
+    </div>
+
+    <!-- 리뷰도서 검색 -->
+    <div class="col-4">
+        <table class="table" style="width: 400px; border: 1px gray;">
+            <colgroup>
+                <col width="30%">
+                <col width="*">
+                <col width="15%">
+            </colgroup>
+
+            <form action="/board/reviewList" class="moveForm" method="get"> 
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="row">
+                                <div class="col">
+                                    <select class="form-select" name="searchType">
+                                        <option value="BOOK_NAME" th:selected="${pageMaker.cri.searchType == 'BOOK_NAME' or pageMaker.cri.searchType == NULL}">도서명</option>
+                                        <option value="WRITER" th:selected="${pageMaker.cri.searchType == 'WRITER'}" >작성자</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="row">
+                                <div class="col">
+                                    <input type="text" name="searchName" class="form-control searchName" th:value="${pageMaker.cri.searchName}">
+                                    
+                                </div>
+                            </div>
+                        </td> 
+                        <td>
+                            <input type="hidden" name="page" class="page" th:value="${pageMaker.cri.page}">
+                            <input type="hidden" name="perPageNum" th:value="${pageMaker.cri.perPageNum}"> 
+                            
+                            <input type="button" class="btn btn-primary searchBtn" value="검색">
+                        </td>                               
+                    </tr>
+                </tbody>
+                
+            </form>
+            
+                        
+        </table>
+
+    </div>
+</div>
+
+
+
+<div class="row justify-content-center">
+    <div class="col ">
+
+        <table class="review-table">
+            <caption>지금 읽자, 책</caption>
+            <thead>
+                <tr>
+                    <th>글번호</th>
+                    <th>도서</th>
+                    <th>도서명</th>
+                    <th>글제목</th>
+                    <th>작성자</th>
+                    <th>등록일</th>
+                    <th>조회수</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="bookListTr" th:each=" review : ${bookReviewList}">
+                  
+                        <td>[[${review.boardNum}]]</td>
+                        <td> <img th:src="@{'/upload/' + ${review.boardImgList[0].attachedFileName}}"> </td>                       
+                        <td>[[${review.bookName}]]</td>
+                        <td style="text-decoration : underline;" th:onclick="goReviewDetail([[${review.boardNum}]])">[[${review.title}]]</td>
+                        <td>[[${review.writer}]]</td>
+                        <td>[[${review.createDate}]]</td>
+                        <td>[[${review.readCnt}]]</td>                  
+                </tr>               
+            </tbody>
+            <tfoot>
+                <td colspan="7" class="tablefoot"></td>
+            </tfoot>
+        </table>
+    </div>
+</div> 
+<!-- 페이징 코드 -->
+   
+    <div class="pagination" th:if="${tCnt!=0}">      
+            <th:block th:if="${pageMaker.prev}"> 
+                <a th:href="@{/board/reviewList(page=${pageMaker.StartPage-1})}"> 이전 </a>
+            </th:block>
+
+           
+
+                <th:block th:each="pageNum : ${#numbers.sequence(pageMaker.StartPage, pageMaker.endPage)}" >                   
+                        <a th:href="@{/board/reviewList(page=${pageNum})}"><span class="pNums" style="margin-right: 30px; margin-left: 25px;" th:value="${pageNum}">[[${pageNum}]]<span></a>                
+                </th:block>
+                
+            
+
+            <th:block th:if="${pageMaker.next && pageMaker.endPage>0}"> 
+                <a th:href="@{/board/reviewList(page=${pageMaker.endPage + 1})}"> 다음 </a>
+            </th:block>                      
+    </div>
+    <form action="/board/reviewList" class ="pageForm" method="post">
+        <div>
+            <input type="hidden" name="page" class="page1" th:value="${pageMaker.cri.page}"> 
+            <input type="hidden" name="perPageNum"  th:value="${pageMaker.cri.perPageNum}"> 
+            <input type="hidden" name="searchType" class="searchType1" th:value="${pageMaker.cri.searchType}"> 
+            <input type="hidden" name="searchName"  class="searchName1" th:value="${pageMaker.cri.searchName}">            
+        </div>
+    </form>
+
+
+<script>
+    // 리뷰작성 페이지 이동 
+    function writeReivew(){
+        location.href='/board/writeReivew'
+    }
+    // 리뷰 상세보기
+    function goReviewDetail(boardNum){
+      
+        location.href=`/board/reivewDetail?boardNum=${boardNum}`;
+    }
+
+
+
+// 검색버튼 눌렀을때 
+const moveForm= document.querySelector(".moveForm"); 
+const searchBtn = document.querySelector(".searchBtn");
+const page = document.querySelector(".page");
+
+searchBtn.addEventListener('click', function(e){
+  
+    e.preventDefault(); // 고유이벤트 속성 중지
+    page.value=1;
+    
+    moveForm.submit();
+    
+});
+
+
+  // 페이지 번호를 눌렀을때  
+  
+  const pNums = document.querySelectorAll(".pNums");
+  const pageForm= document.querySelector(".pageForm");
+  const page1 = document.querySelector(".page1");
+
+  pNums.forEach(function(pNum,i){
+        
+    pNum.addEventListener('click', function(event) {
+        
+        event.preventDefault(); // 고유이벤트 속성 중지
+               
+        // 사용자가 클릭한 페이지 번호를 form에 넣고 서브밋
+        page1.value = pNum.innerText ; 
+       
+        pageForm.submit(); // 서브밋
+           
+     })
+  
+  });
+
+
+</script>
+
+
+</th:block>
+
+<!-- <th:block layout:fragment="content_js">
+    html 파일이 열릴때 같이 실행하는 js
+    <script src="/js/content/member/login.js"></script>
+</th:block> -->
+
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title></title>
+</head>
+<body>
+
+    <th:block th:fragment="userSideFragment">
+        <ul class="list-group">
+            <li class="list-group-item point-span" th:classappend="${page == 'history' ? 'active' : ''}"  onclick="location.href='/buy/history?page=history';">구매 이력</li>
+            <li class="list-group-item point-span" th:classappend="${page == 'cartList' ? 'active' : ''}"  onclick="location.href='/cart/list?page=cartList';" >장바구니 목록</li>
+            <li class="list-group-item point-span">내 정보 관리</li>
+    
+        </ul>
+    </th:block>
+
+</body>
+</html>

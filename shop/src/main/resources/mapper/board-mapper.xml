@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 해당 파일에 모든 쿼리문을 작성 -->
+<mapper namespace="boardMapper">
+
+
+    <resultMap id="boardResult" type="com.green.shop.board.vo.BoardVo">
+        <result column="BOARD_NUM"              property="boardNum"/>
+        <result column="TITLE"                  property="title"/>
+        <result column="BOOK_NAME"              property="bookName"/>
+        <result column="CONTENT"                property="content"/>
+        <result column="WRITER"                 property="writer"/>
+        <result column="CREATE_DATE"            property="createDate"/>
+        <result column="READ_CNT"               property="readCnt"/>
+        <collection property="boardImgList"     resultMap="resultBoardImg"/>
+    </resultMap>
+
+    <resultMap id="resultBoardImg" type="com.green.shop.board.vo.BoardImgVo">
+        <id column="IMG_CODE"                       property="imgCode"/>
+        <result column="ORIGIN_FILE_NAME"           property="originFileName"/>
+        <result column="ATTACHED_FILE_NAME"         property="attachedFileName"/>
+        <result column="IS_MAIN"                    property="isMain"/>
+        <result column="BOARD_NUM"                  property="boardNum"/>
+    </resultMap>
+
+
+    <!--  최대값 보다 1 더 큰값을 구하기-->
+    <select id="selectNextBoardNum" resultType="int">
+        SELECT IFNULL(MAX(BOARD_NUM), 0) + 1 FROM review_board;
+    </select>
+
+
+
+    <!--리뷰목록 조회 및 검색 -->
+    <select id="selectList" resultType="hashmap" parameterType="hashMap" resultMap="boardResult">
+        SELECT
+            BB.BOARD_NUM
+            , BOOK_NAME
+            , TITLE
+            , WRITER
+            , DATE(CREATE_DATE) as CREATE_DATE
+            , READ_CNT
+            , ATTACHED_FILE_NAME
+            , IS_MAIN
+        FROM review_board BB
+        INNER JOIN BOARD_IMAGE BI
+        ON BB.BOARD_NUM = BI.BOARD_NUM
+        WHERE IS_MAIN= 'Y'
+        <if test='searchName != null and searchName != ""'>
+            AND ${searchType} LIKE CONCAT('%', #{searchName}, '%')
+        </if>
+        ORDER BY BB.BOARD_NUM DESC
+        LIMIT #{pageStart}, #{perPageNum}
+
+    </select>
+
+
+
+<!-- 리뷰글 저장   -->
+    <insert id="insertWrite">
+        INSERT INTO review_board(
+            BOARD_NUM
+            , TITLE
+            , BOOK_NAME
+            , WRITER
+            , CONTENT
+        ) VALUES(
+             #{boardNum}
+            ,#{title}
+            ,#{bookName}
+            ,#{writer}
+            ,#{content}
+        )
+    </insert>
+
+<!-- 리뷰 이미지 저장   -->
+    <insert id="insertImgs">
+        INSERT INTO BOARD_IMAGE(
+            ORIGIN_FILE_NAME
+            , ATTACHED_FILE_NAME
+            , IS_MAIN
+            , BOARD_NUM
+        ) VALUES
+        <foreach collection="boardImgList" item="BoardImgVo" separator=",">
+            (
+            #{BoardImgVo.originFileName}
+            , #{BoardImgVo.attachedFileName}
+            , #{BoardImgVo.isMain}
+            , #{BoardImgVo.boardNum}
+            )
+        </foreach>
+    </insert>
+
+
+    <!--리뷰글 1 상세조회-->
+    <select id="boardDetail" resultMap="boardResult">
+        SELECT
+        BB.BOARD_NUM
+        , TITLE
+        , WRITER
+        , BOOK_NAME
+        , CREATE_DATE
+        , CONTENT
+        , READ_CNT
+        , ATTACHED_FILE_NAME
+        , BI.IS_MAIN
+        FROM review_board BB
+        INNER JOIN BOARD_IMAGE BI
+        ON BB.BOARD_NUM = BI.BOARD_NUM
+        WHERE BB.BOARD_NUM=#{boardNum}
+    </select>
+
+
+<!--    &lt;!&ndash;글삭제&ndash;&gt;-->
+<!--    <delete id="deleteBoard">-->
+<!--        DElETE FROM review_board-->
+<!--        WHERE BOARD_NUM=#{boardNum}-->
+<!--    </delete>-->
+
+<!--    &lt;!&ndash;글 수정 &ndash;&gt;-->
+<!--    <update id="updateBoard">-->
+<!--        UPDATE review_board-->
+<!--        SET-->
+<!--        TITLE =#{title}-->
+<!--        , CONTENT =#{content}-->
+<!--        WHERE BOARD_NUM=#{boardNum}-->
+<!--    </update>-->
+
+    <!--조회수 증가-->
+    <update id="updateReadCnt">
+        UPDATE review_board
+        SET
+        READ_CNT= READ_CNT +1
+        WHERE BOARD_NUM=#{boardNum}
+    </update>
+
+    <!--페이징 할 총 데이터수(게시글 총갯수)-->
+    <select id="selectBoardCnt" resultType="int">
+        SELECT COUNT(BOARD_NUM)
+        FROM review_board
+        <if test='searchName != null and searchName != ""'>
+            WHERE ${searchType} LIKE CONCAT('%', #{searchName}, '%')
+        </if>
+
+    </select>
+
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

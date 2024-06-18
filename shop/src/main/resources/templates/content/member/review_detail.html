@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+                xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+                layout:decorate="~{fragment/user_layout}" >
+
+<th:block layout:fragment="content_css">
+    <!-- html 파일이 열릴때 같이 실행하는 css-->
+    <!--<link rel="stylesheet" href="/">-->
+</th:block>
+
+<th:block layout:fragment="contentFragment">
+<!-- html 코드 작성-->
+
+<link rel="stylesheet" href="/css/review_detail.css" type="text/css">
+
+
+<div class="container">
+        <div class="row" style="margin-left: 8%; width:1000px ;">
+            <div class="col-4 ">
+                <th:block th:each="img : ${reviewBoard.boardImgList}">
+                    <th:block th:if="${img.isMain == 'Y'}">
+                        <img th:src="@{'/upload/'+ ${img.attachedFileName}}" width="300px" height="100px" class="img-thumbnail" alt="대표이미지">
+                    </th:block>
+                </th:block>
+            </div>
+            <div class="col-8">
+                <div class="row">
+                    <div class="col">
+                        <table class=" table detailReviewTable">
+                            <colgroup>
+                                <col width="20%">
+                                <col width="*%">
+                            </colgroup> 
+                            <tr>
+                                <th>도서명</th>
+                                <td>[[${reviewBoard.bookName}]]</td>
+                            </tr>
+                            <tr>
+                                <th>글제목</th>
+                                <td>[[${reviewBoard.title}]]</td>
+                            </tr>
+                            <tr>
+                                <th>작성자</th>
+                                <td>[[${reviewBoard.writer}]]</td>
+                            </tr>
+                            <tr>
+                                <th>작성일</th>
+                                <td>[[${reviewBoard.createDate}]]</td>
+                            </tr>
+                            <tr>
+                                <th colspan="2">리뷰</th>
+                                
+                            </tr>
+                            <tr>
+                                <td colspan="2">[[${reviewBoard.content}]]</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div> 
+        <div class="row mt-4">
+            <div class="col detailImg-div">
+
+                <th:block th:each="img : ${reviewBoard.boardImgList}">
+                    <th:block th:if="${img.isMain == 'N'}">
+                        <div class="row">
+                            <div class="col">
+                                            
+                                <img th:src="@{'/upload/'+ ${img.attachedFileName}}" width="40%" height="40%" class="img-thumbnail" alt="상세이미지"> 
+            
+                            </div>
+                        </div>
+                    </th:block>    
+                </th:block>  
+
+            </div>
+        </div>
+
+
+
+</div>
+
+</th:block>
+
+<th:block layout:fragment="content_js">
+    <!--html 파일이 열릴때 같이 실행하는 js-->
+    <!-- <script src="/js/content/member/login.js"></script> -->
+</th:block>
+</html>

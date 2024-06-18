@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 해당 파일에 모든 쿼리문을 작성 -->
+<mapper namespace="cartMapper">
+
+
+    <resultMap id="resultCart" type="com.green.shop.cart.vo.CartViewVo">
+        <result column="CART_CODE"     property="cartCode"/>
+        <result column="ITEM_CODE"     property="itemCode"/>
+        <result column="MEMBER_ID"     property="memberId"/>
+        <result column="CART_CNT"      property="cartCnt"/>
+        <result column="CART_DATE"     property="cartDate"/>
+        <result column="ITEM_NAME"     property="itemName"/>
+        <result column="ITEM_PRICE"    property="itemPrice"/>
+        <result column="ITEM_INTRO"    property="itemIntro"/>
+        <result column="TOTAL_PRICE"   property="totalPrice"/>
+        <result column="MEMBER_NAME"   property="memberName"/>
+        <result column="MEMBER_TEL"    property="memberTel"/>
+        <result column="ADDRESS"       property="address"/>
+        <result column="IMG_CODE"      property="imgCode"/>
+        <result column="ORIGIN_FILE_NAME"       property="originFileName"/>
+        <result column="ATTACHED_FILE_NAME"     property="attachedFileName"/>
+        <result column="IS_MAIN"                property="isMain"/>
+        <result column="CATE_CODE"              property="cateCode"/>
+        <result column="CATE_NAME"              property="cateName"/>
+    </resultMap>
+
+<!--  장바구니 클릭시 장바구니에 담기  -->
+    <insert id="insertCart">
+        INSERT INTO SHOP_CART(
+             ITEM_CODE
+            , MEMBER_ID
+            , CART_CNT
+        )VALUES(
+             #{itemCode}
+            , #{memberId}
+            , #{cartCnt}
+        )
+    </insert>
+
+    <select id="cartViewList" resultMap="resultCart">
+        SELECT CART_CODE
+            , CART_CNT
+            , ITEM_NAME
+            , ITEM_PRICE
+            , TOTAL_PRICE
+            , ATTACHED_FILE_NAME
+        FROM CART_VIEW
+        WHERE MEMBER_ID=#{memberId}
+        ORDER BY CART_DATE DESC
+    </select>
+
+        <!-- 장바구니에 행결과이 있는지 없는지 확인   -->
+    <select id="selectCart" resultType="int">
+        SELECT
+            COUNT(CART_CODE)
+        FROM SHOP_CART
+        WHERE MEMBER_ID= #{memberId}
+        AND ITEM_CODE= #{itemCode}
+    </select>
+
+    <!-- 장바구니에 같은 상품 추가   -->
+    <update id="plusCartCnt">
+        UPDATE SHOP_CART
+            SET
+                CART_CNT = CART_CNT + #{cartCnt}
+        WHERE MEMBER_ID= #{memberId}
+        AND ITEM_CODE= #{itemCode}
+    </update>
+
+    <!-- 장바구니에 상품삭제   -->
+    <delete id="deleteCart">
+        DELETE FROM SHOP_CART
+        WHERE CART_CODE= #{cartCode}
+    </delete>
+
+
+    <!-- 장바구니에 갯수 업데이트   -->
+    <update id="updateCart">
+        UPDATE SHOP_CART
+            SET
+            CART_CNT = #{cartCnt}
+        WHERE CART_CODE=#{cartCode}
+    </update>
+
+<!--  장바구니에서 상품선택하여 삭제하기  -->
+    <delete id="deleteCarts">
+             DELETE
+                FROM SHOP_CART
+             WHERE CART_CODE IN
+        <foreach collection="cartCodeList" item="cartCode" separator="," open="(" close=")">
+            #{cartCode}
+        </foreach>
+<!-- foreach결과문 :  WHERE CART_CODE IN (1,2,3)     -->
+<!--   cartVo.getCartCodeList() 호출      -->
+<!--   cartCodeList[1,2,3]     -->
+    </delete>
+
+
+<!--  장바구니에서 선택구매 목록 조회  -->
+    <select id="selectCartListForBuy" resultMap="resultCart">
+       SELECT ITEM_CODE
+            , CART_CNT
+            , TOTAL_PRICE
+        FROM cart_view
+        WHERE
+         CART_CODE IN
+         <foreach collection="cartCodeList" item="cartCode" separator="," open="(" close=")">
+             #{cartCode}
+         </foreach>
+
+    </select>
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

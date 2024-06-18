@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 해당 파일에 모든 쿼리문을 작성 -->
+<mapper namespace="memberMapper">
+
+
+    <resultMap id="resultMember" type="com.green.shop.member.vo.MemberVo">
+        <result column="MEMBER_ID"      property="memberId"/>
+        <result column="MEMBER_PW"      property="memberPw"/>
+        <result column="MEMBER_NAME"    property="memberName"/>
+        <result column="GENDER"         property="gender"/>
+        <result column="MEMBER_EMAIL"   property="memberEmail"/>
+        <result column="MEMBER_TEL"     property="memberTel"/>
+        <result column="MEMBER_ADDR"    property="memberAddr"/>
+        <result column="ADDR_DETAIL"    property="addrDetail"/>
+        <result column="POST_CODE"      property="postCode"/>
+        <result column="JOIN_DATE"      property="joinDate"/>
+        <result column="MEMBER_ROLL"    property="memberRoll"/>
+    </resultMap>
+
+<!--회원가입등록 -->
+
+    <insert id="insertMember">
+        INSERT INTO SHOP_MEMBER(
+            MEMBER_ID
+            , MEMBER_PW
+            , MEMBER_NAME
+            , GENDER
+            , MEMBER_EMAIL
+            , MEMBER_TEL
+            , MEMBER_ADDR
+            , ADDR_DETAIL
+            , POST_CODE
+        )VALUES(
+            #{memberId}
+            , #{memberPw}
+            , #{memberName}
+            , #{gender}
+            , #{memberEmail}
+            , #{memberTel}
+            , #{memberAddr}
+            , #{addrDetail}
+            , #{postCode}
+        )
+    </insert>
+<!--로그인 조회 -->
+    <select id="selectMember" resultMap="resultMember">
+        SELECT
+            MEMBER_ID
+            , MEMBER_NAME
+            , MEMBER_ROLL
+        FROM SHOP_MEMBER
+        WHERE MEMBER_ID= #{memberId}
+        AND MEMBER_PW = #{memberPw}
+    </select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

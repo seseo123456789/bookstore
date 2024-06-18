@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+                         xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+                            layout:decorate="~{fragment/admin_layout}" >
+
+<th:block layout:fragment="content_css">
+    <!-- html 파일이 열릴때 같이 실행되는 css -->
+    <!-- <link rel="stylesheet" href="/"> -->
+</th:block>
+
+<th:block layout:fragment="contentFragment">
+    <!-- html 코드작성 -->
+ 
+    <!-- 기본정보변경화면 띄위기 위해서 컨트롤러의 admmin/updateItemInfo 에서  ItemCode 받아오기 -->
+<input type="hidden" id="updateItemCode" th:value="${updateItemCode}">
+
+<div class="row">
+
+    <div class="col">
+
+        <div class="row mb-3" >
+            <div class="col buyList-div">
+              
+                <h1>상품 목록</h1>
+              
+            </div>
+        </div> 
+
+        <div class="row mb-2">
+            <div class="col text-end" style="font-size:12px; color:red;">
+                *총 8개의 상품이 등록되어 있습니다.
+            </div>
+        </div>
+    
+        <div class="row">
+            <div class="col">                                
+                <table class="table table-striped text-center table-bordered table-primary-subtle table-hover" style="font-size:15px;">
+                    <colgroup>
+                        <col width="13%">
+                        <col width="17%">
+                        <col width="40%">
+                        <col width="15%">
+                        <col width="*%">
+                    </colgroup>
+                    <thead>
+                        <tr class="table-primary">
+                            <td>No</td>
+                            <td>상품코드</td>
+                            <td>상품명</td>
+                            <td>재고</td>
+                            <td>상태</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="itemVo, state :${itemList}" th:onclick="getDetail([[${itemVo.itemCode}]])" style="cursor: pointer; font-family: 'SUITE-Regular'; font-weight:bolder;">
+                            <td>[[${#lists.size(itemList)-state.index}]]</td>
+                            <td>[[${itemVo.itemCode}]]</td>
+                            <td>[[${itemVo.itemName}]]</td>
+                            <td>[[${itemVo.currentStock}]]</td>
+                            <td>[[${itemVo.strStatus}]]</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <!-- 상품기본정보 테이블 -->
+    <div class="col detail-div">
+
+        
+    </div>
+
+
+</div>
+
+
+<!-- 이미지 제목 클릭시 Modal -->
+<div class="modal fade" id="img-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">이미지</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+        
+            <div class="modal-body">
+                
+                 <img width="100%" src=""> 
+            
+            
+            </div>
+    
+          
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
+      </div>
+</div>
+
+</th:block>
+
+
+
+
+<th:block layout:fragment="content_js">
+    <!-- html 파일이 열릴때 같이 실행되는 js -->
+    <script src="/js/content/admin/update_item.js"></script>
+</th:block>
+</html>
